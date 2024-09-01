@@ -5,6 +5,7 @@ import (
 	cfg "nuzhen-5-backend/config"
 	"nuzhen-5-backend/internal/domain/delievery/http"
 	"nuzhen-5-backend/internal/domain/delievery/http/handlers"
+	"nuzhen-5-backend/internal/domain/models"
 	"nuzhen-5-backend/internal/domain/repo"
 	"nuzhen-5-backend/internal/infrastructure/database"
 	"nuzhen-5-backend/internal/infrastructure/di"
@@ -35,10 +36,10 @@ func main() {
 		panic(err)
 	}
 
-	//err = connector.CreateTables(postgresDb, &models.User{}, &models.Chat{}, &models.Lobby{}, &models.LobbyStructure{})
-	//if err != nil {
-	//	panic(err)
-	//}
+	err = connector.CreateTables(postgresDb, &models.User{}, &models.Chat{}, &models.Lobby{}, &models.LobbyStructure{})
+	if err != nil {
+		log.Error("Failed to create tables, because they exists")
+	}
 
 	log.Info("postgres connected successfully!")
 

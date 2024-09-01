@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Сервис для вашего Go приложения
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      # Переменные окружения для подключения к базе данных
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=lolkek123
+      - DB_NAME=postgres
+
+  # Сервис для PostgreSQL
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lolkek123
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+# Определение volumes
+volumes:
+  pgdata:
