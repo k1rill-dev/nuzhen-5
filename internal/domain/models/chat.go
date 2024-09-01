@@ -7,7 +7,8 @@ import (
 
 type Chat struct {
 	gorm.Model
-	id     uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	chatId string    `gorm:"varchar(255);"`
-	userId User      `gorm:"foreignKey:UserRefer"`
+	Id     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
+	ChatId string    `gorm:"varchar(255);" json:"chat_id"`
+	UserId uuid.UUID `json:"user"`
+	User   User
 }
