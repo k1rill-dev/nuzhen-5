@@ -46,7 +46,7 @@ func (h *UserHandlers) CreateUser(c *gin.Context) {
 }
 
 func (h *UserHandlers) GetUser(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("userId")
 	user, err := h.userRepo.GetUser(uuid.MustParse(id))
 	if err != nil {
 		log.Err(err)

@@ -19,7 +19,7 @@ const (
 )
 
 func main() {
-	config := cfg.MustLoadConfig("config/config.yaml")
+	config := cfg.MustLoadConfig("./config/config.yaml")
 	log := setupLogger(config.Env)
 	log.Info("config loaded successfully!")
 	container := di.NewContainer()
