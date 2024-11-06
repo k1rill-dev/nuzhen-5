@@ -172,3 +172,15 @@ func (l *LobbyHandlers) GetAllUsersFromLobby(c *gin.Context) {
 
 	c.JSON(http.StatusOK, users)
 }
+
+func (l *LobbyHandlers) GetLobbyInfo(c *gin.Context) {
+	lobbyID, err := uuid.Parse(c.Param("lobbyId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid UUID"})
+	}
+	lobbyInfo, err := l.lobbyRepo.GetLobbyInfo(lobbyID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	c.JSON(http.StatusOK, lobbyInfo)
+}

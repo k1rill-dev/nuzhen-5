@@ -36,6 +36,7 @@ func (h *HTTPServer) Run() {
 	router.POST("/chats", h.chatHandlers.CreateChat)
 
 	router.POST("/lobbies", h.lobbyHandlers.CreateLobby)
+	router.GET("/lobbies/getInfo/:lobbyId", h.lobbyHandlers.GetLobbyInfo)
 	router.GET("/lobbies/:lobbyId", h.lobbyHandlers.GetLobby)
 	router.GET("/users/:userId/lobbies", h.lobbyHandlers.GetAllLobbiesFromUser)
 	router.POST("/lobbies/:lobbyId/users", h.lobbyHandlers.AddUsersToLobby)

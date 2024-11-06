@@ -20,6 +20,7 @@ type LobbyRepo interface {
 	RemoveUserFromLobby(lobbyID uuid.UUID, userID uuid.UUID) error
 	UpdateLobby(lobbyID uuid.UUID, updates LobbyUpdate) (models.Lobby, error)
 	GetAllUsersFromLobby(lobbyID uuid.UUID) ([]models.User, error)
+	GetLobbyInfo(lobbyId uuid.UUID) (LobbyInfo, error)
 }
 
 type LobbyUpdate struct {
@@ -31,6 +32,18 @@ type LobbyUpdate struct {
 	DateEnd        *time.Time `json:"date_end,omitempty"`
 	AdditionalInfo *string    `json:"additional_info,omitempty"`
 	OrgID          *uuid.UUID `json:"org_id,omitempty"`
+}
+
+type LobbyInfo struct {
+	Name           *string       `json:"name,omitempty"`
+	Game           *string       `json:"game,omitempty"`
+	RuinerCount    *int          `json:"ruiner_count,omitempty"`
+	LobbyCount     *int          `json:"lobby_count,omitempty"`
+	DateStart      *time.Time    `json:"date_start,omitempty"`
+	DateEnd        *time.Time    `json:"date_end,omitempty"`
+	AdditionalInfo *string       `json:"additional_info,omitempty"`
+	OrgID          *uuid.UUID    `json:"org_id,omitempty"`
+	Users          []models.User `json:"users,omitempty"`
 }
 
 type LobbyRepoImpl struct {
@@ -53,6 +66,40 @@ func (l *LobbyRepoImpl) GetAllUsersFromLobby(lobbyID uuid.UUID) ([]models.User, 
 		return nil, err
 	}
 	return users, nil
+}
+
+func (l *LobbyRepoImpl) GetLobbyInfo(lobbyId uuid.UUID) (LobbyInfo, error) {
+	var lobby models.Lobby
+	var lobbyInfo LobbyInfo
+
+	err := l.DB.Preload("Org").Where("id = ?", lobbyId).First(&lobby).Error
+	if err != nil {
+		return lobbyInfo, err
+	}
+
+	lobbyInfo = LobbyInfo{
+		Name:           &lobby.Name,
+		Game:           &lobby.Game,
+		RuinerCount:    &lobby.RuinerCount,
+		LobbyCount:     &lobby.LobbyCount,
+		DateStart:      &lobby.DateStart,
+		DateEnd:        &lobby.DateEnd,
+		AdditionalInfo: &lobby.AdditionalInfo,
+		OrgID:          &lobby.OrgID,
+	}
+
+	var lobbyStructures []models.LobbyStructure
+	err = l.DB.Preload("User").Where("lobby_id = ?", lobbyId).Find(&lobbyStructures).Error
+	if err != nil {
+		return lobbyInfo, err
+	}
+
+	for _, ls := range lobbyStructures {
+		lobbyInfo.Users = append(lobbyInfo.Users, ls.User)
+	}
+
+	return lobbyInfo, nil
+
 }
 
 func (l *LobbyRepoImpl) RemoveUserFromLobby(lobbyID uuid.UUID, userID uuid.UUID) error {
